@@ -37,7 +37,7 @@
 <meta property="og:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/2.png">
 <meta property="og:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/3.png">
 <meta property="article:published_time" content="2021-07-16T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-07-17T06:09:36.286Z">
+<meta property="article:modified_time" content="2021-07-17T06:30:09.372Z">
 <meta property="article:author" content="Charloe">
 <meta property="article:tag" content="subspace clustering">
 <meta name="twitter:card" content="summary">
@@ -200,7 +200,7 @@
               <span class="post-meta-item-text">Posted on</span>
               
 
-              <time title="Created: 2021-07-17 00:00:00 / Modified: 14:09:36" itemprop="dateCreated datePublished" datetime="2021-07-17T00:00:00+08:00">2021-07-17</time>
+              <time title="Created: 2021-07-17 00:00:00 / Modified: 14:30:09" itemprop="dateCreated datePublished" datetime="2021-07-17T00:00:00+08:00">2021-07-17</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -354,14 +354,14 @@ s.t. \quad supp(\boldsymbol{b_j}) \subseteq S^{(k+1)}
 }
 \]</span> 然后计算残差<span class="math inline">\(\boldsymbol{q^{(k+1)}} = \boldsymbol{x_j} - \Xi \boldsymbol{b_j}^{(k+1)}\)</span>.</p>
 <p>我们将解决问题(15)的步骤总结成算法1，称为Damped Orthogonal Matching Pursuit (Damped OMP).</p>
-<p><img src="1.png" style="zoom:50%"></p>
+<p><img src="/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/1.png" style="zoom:50%"></p>
 <p><strong>2.当<span class="math inline">\(\{ b^{(t)}_j \}^T_{t=1}\)</span>固定</strong>：</p>
 <p>我们从如下问题来求解<span class="math inline">\(c_j\)</span> <span class="math display">\[
 \min_{\boldsymbol{c_j}} \frac{\lambda}{T} \sum_{t=1}^T \Vert \boldsymbol{b}^{(t)}_j - \boldsymbol{c}_j \Vert^2_2
 \tag{18}
 \]</span> 该问题有一个封闭形式的解<span class="math inline">\(c_j = \frac1{T} \sum^{T}_{t=1} b^{(t)}_j\)</span>.</p>
 <p>我们将求解共识问题(13)的交替最小化算法总结成算法2，称为Consensus OMP。为了清晰性，我们将我们提出的子空间聚类方法过程梳理成算法3，称为Stochastic Sparse Subspace Clustering via Orthogonal Matching Pursuit with Consensus <span class="math inline">\((S^3COMP-C)\)</span>，并且我们用<span class="math inline">\(S^3COMP\)</span>指代通过只有一个外部迭代的算法2来解决共识问题(13)的方法。注意，每个<span class="math inline">\(b^{(t)}_j\)</span>的支持集大小取决于<span class="math inline">\(s\)</span>，<span class="math inline">\(c_j\)</span>的支持集大小取决于<span class="math inline">\(sT\)</span>，因此改善了推导出的亲和图的连通性。</p>
-<p><img src="2.png" width=400><img src="3.png" width=400></p>
+<p><img src="/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/2.png" width="400"><img src="/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/3.png" width="400"></p>
 <p><strong>收敛性和终止条件。</strong>和OMP中的收敛分析一样，算法1最多在<span class="math inline">\(s\)</span>步内收敛。对于算法2，我们检查两个连续迭代中<span class="math inline">\(c_j\)</span>的相对差值是否小于某个阈值<span class="math inline">\(\varepsilon\)</span>或达到最大迭代次数来判断是否终止。尽管我们不能证明算法2的收敛性，在合成数据和真实世界数据上的实验证明了它很好的收敛性。在实验中，我们观察到外部迭代的数量很小，即在真实世界的数据集上<span class="math inline">\(T_0 = 3 \sim 5\)</span>.</p>
 <p><strong>复杂度分析.</strong>在算法2中，它通过damped OMP并行地解决了<span class="math inline">\(T\)</span>个规模简化的子问题，每个子问题需求<span class="math inline">\(N(1 - \delta)\)</span>次内积。因此，每个子问题在一次外部迭代的计算复杂度为<span class="math inline">\(\mathcal{O}(D N^2 (1 - \delta) s)\)</span>. <span class="math inline">\(S^3COMP和S^3COMP-C\)</span>的亲和矩阵最多包含<span class="math inline">\(sTN\)</span>个非零项；<span class="math inline">\(SSCOMP\)</span>包含最多<span class="math inline">\(sN\)</span>个非零项。使用ARPACK分解稀疏矩阵的特征值需要<span class="math inline">\(\mathcal{O}(snTN)\)</span>操作，其中<span class="math inline">\(n\)</span>是子空间的数量（即集群）。尽管<span class="math inline">\(S^3COMP\)</span>和<span class="math inline">\(S^3COMP-C\)</span>的亲和矩阵包含更多的非零项(至多<span class="math inline">\(sTN\)</span>)，亲和矩阵仍是稀疏的，因此，谱聚类中特征值分解的时间复杂度为<span class="math inline">\(\mathcal{O}(nsTN)\)</span>，只比<span class="math inline">\(SSCOMP\)</span>的复杂度<span class="math inline">\(\mathcal{O}(nsN)\)</span>高一点。对于大规模数据集，我们令<span class="math inline">\((1 - \delta) \ll 1\)</span>，并行地解决<span class="math inline">\(T\)</span>个简化规模地子问题。这使<span class="math inline">\(S^3COMP-C和S^3COMP\)</span>有更灵活的可扩展性。</p>
 <h3 id="experiments">5. Experiments</h3>

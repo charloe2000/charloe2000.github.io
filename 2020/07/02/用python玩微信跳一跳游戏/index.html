@@ -40,7 +40,7 @@
 <meta property="og:image" content="https://charloe2000.github.io/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/5.jpg">
 <meta property="og:image" content="https://charloe2000.github.io/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/6.jpg">
 <meta property="article:published_time" content="2020-07-02T05:01:21.000Z">
-<meta property="article:modified_time" content="2021-07-17T06:08:26.423Z">
+<meta property="article:modified_time" content="2021-07-17T06:33:08.607Z">
 <meta property="article:author" content="Charloe">
 <meta property="article:tag" content="Python">
 <meta name="twitter:card" content="summary">
@@ -209,7 +209,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-07-17 14:08:26" itemprop="dateModified" datetime="2021-07-17T14:08:26+08:00">2021-07-17</time>
+                <time title="Modified: 2021-07-17 14:33:08" itemprop="dateModified" datetime="2021-07-17T14:33:08+08:00">2021-07-17</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -244,7 +244,7 @@
 <p>本篇博客介绍了如何使用python代码玩微信跳一跳游戏。很早之前就听说过使用python脚本玩跳一跳游戏刷分，当时对相关原理一窍不通，但这完全不影响我的好奇心和求知欲。如今终于有机会探求其中的奥妙。</p>
 <p>百度上一搜python、跳一跳关键词，就弹出不知多少相关教程。但我发现很多代码用的方法似乎有一定缺陷，在遇到一些情况时就无法起作用了。而这些情况在游戏过程中不可避免的会出现，这就导致最终的分数可能并不会很高。</p>
 <p>本篇博客综合多方面的idea，主要参考<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">此源码</a>(下提到此源码一词，即指代此处)，基于自己的理解做了一些修改和简化。原文中分别给出了在 Android 和 iOS 下运行的代码，和多种不同思路的方法。此处仅介绍Android下的一种方法。</p>
-<hr />
+<hr>
 <h2 id="环境配置要求">环境配置要求</h2>
 <ol type="1">
 <li><p>安装<a target="_blank" rel="noopener" href="https://www.python.org/">python3</a></p></li>
@@ -254,7 +254,7 @@
 <ol start="3" type="1">
 <li>安装其他依赖库：<a target="_blank" rel="noopener" href="https://opencv.org/">opencv</a>, <a target="_blank" rel="noopener" href="https://numpy.org/">numpy</a>等</li>
 </ol>
-<hr />
+<hr>
 <h2 id="代码实现">代码实现</h2>
 <h3 id="分析">分析</h3>
 <ol type="1">
@@ -270,25 +270,25 @@
 <h3 id="识别棋子所处位置">识别棋子所处位置</h3>
 <p>我使用的方法是利用opencv中的模板匹配函数<code>cv2.matchTemlpate()</code>，只需要提供一张棋子的图像即可，准确度非常高。左一图为棋子图像，左二图为识别结果。</p>
 <figure>
-<img src="1.jpg" alt="棋子" /><figcaption aria-hidden="true">棋子</figcaption>
+<img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/1.jpg" alt="棋子"><figcaption aria-hidden="true">棋子</figcaption>
 </figure>
 <p>棋子位置已经有了，但我们要的是棋子所处的坐标点。取方框X方向的中点为X坐标，取方框Y方向 9/10 处为Y坐标。棋子所处的坐标点就是（X, Y），如右一图。</p>
 <h3 id="识别棋盘中心位置">识别棋盘中心位置</h3>
 <p>这部分比较复杂，我参照了<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">此源码</a>的实现方法，但二者又有明显不同。</p>
 <p>据观察，我们认为，在Y方向上（竖直方向）棋盘出现的位置在1/3 - 2/3处之间。而在X方向上（水平方向），如果棋子在屏幕偏左方，棋盘必在棋子的右方；如果棋子在屏幕偏右方，棋盘必在棋子的左方。那么我们搜索的范围就大大缩小，如下图红框（此时棋子在屏幕偏左方）：</p>
-<p><img src="2.jpg" alt="棋盘可能的位置" style="width:50%;" /></p>
+<p><img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/2.jpg" alt="棋盘可能的位置" style="width:50%;"></p>
 <h4 id="寻找上顶点">寻找上顶点</h4>
 <p>我们先找到棋盘的上顶点。</p>
 <p>显然，棋盘上顶点颜色与背景色差异较大，可依据这一特点在区域内搜索。从红框左上角像素开始逐行搜索，取每行最左端点为初始点记录像素值，与该行内的每个像素进行比对，如果二者差异较大，就认为找到了上顶点。</p>
 <p>为提高搜索速度，可以每50行取一行搜索，如果出现差异较大的点，在重新搜索这50行，取第一个差异点为上顶点。</p>
 <p>这种方法在棋盘是菱形时是有效的，但棋盘是椭圆形时是否有效呢？你可能认为也有效，因为椭圆形也只具有一个上顶点。实际上，我发现椭圆形棋盘在截图中没有上顶点，最上面是一条短线（把截图放大也能发现）。因此，在用上面的方法时，得到的上顶点会是这条短线的最左端的点。</p>
-<p><img src="3.jpg" alt="椭圆棋盘的短线" style="width:90%;" /></p>
+<p><img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/3.jpg" alt="椭圆棋盘的短线" style="width:90%;"></p>
 <p>上面的方法是，在行内找到一个差异点就终止搜索，认为这个差异点是上顶点。我们修改一下，在行内找差异点后继续搜索该行，并记录差异点，知道该行搜索完毕终止搜索。把记录的所有差异点的取平均值，就能得到短线的中点，即椭圆的上顶点。</p>
 <h4 id="寻找中心点">寻找中心点</h4>
 <p>好了，我们找到棋盘的上顶点了，无论它是椭圆形还是菱形，结果都是准确的。</p>
 <p>但如何寻找棋盘的中心点？我也不知道。起初我的想法是，找到棋盘的上顶点和右端点，二者分别做个辅助线交点就是棋盘中心点了。于是我用类似寻找上顶点的方法，寻找右端点，从右向左逐列搜索，没错是找到了。但我发现，少部分情况下会出问题。当棋盘位于屏幕偏右方，结果完全准确；当棋盘位于屏幕偏左方，因为我们限制了搜索范围（只搜索棋子的左方），结果大部分情况下也是准确的。什么时候不准确呢？当棋子和棋盘靠的很近，而棋盘又比较大的时候，棋盘的右端点被棋子遮住了...这我还搜索个啥？虽然这种情况很少出现，但不得不说他不是种好方法。</p>
 <figure>
-<img src="" alt="假装有图，实际上玩了半天游戏没找到好的示意图" /><figcaption aria-hidden="true">假装有图，实际上玩了半天游戏没找到好的示意图</figcaption>
+<img src alt="假装有图，实际上玩了半天游戏没找到好的示意图"><figcaption aria-hidden="true">假装有图，实际上玩了半天游戏没找到好的示意图</figcaption>
 </figure>
 <p>那搜索棋盘左端点行不行？也不行。当棋盘位于屏幕偏右方，棋盘左端点也有被遮住的可能。</p>
 <p>这个时候，<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">此源码</a>使用的方法就比较高端，出现上述情况时也能准确计算出中心点。下面我讲解一下。</p>
@@ -297,23 +297,23 @@
 <p>给出的角度是tan θ = 25.5 / 43.5 。</p>
 <p>咋来的？不知道，真不知道。算了，先用吧。</p>
 <p>既然知道了这个规律，那么我们就可以这样计算出棋盘中心点的坐标（X, Y ）：</p>
-<p><img src="4.jpg" alt="数学算术" style="width:70%;" /></p>
+<p><img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/4.jpg" alt="数学算术" style="width:70%;"></p>
 <p>这种规律到底是不是存在的？我们可以验证一下，下面是我调试代码时得到的一些图像：</p>
-<p><img src="5.jpg" alt="图像1" /></p>
+<p><img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/5.jpg" alt="图像1"></p>
 <p>仅用肉眼来看的话，我们几乎可以认为两个棋盘中心点的连线是平行的（此时棋子处于中心点）。而大量事实也证明了，牛人给出的规律是有效的，计算出的中心点位置很准确。</p>
 <h3 id="计算按压时间">计算按压时间</h3>
 <p>好了，我们终于得到了棋子起始坐标点、棋盘中心点坐标，那么就可以计算出二者的直线距离了。然后根据直线距离，计算按压时间。</p>
 <p>说实话，<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">这位大牛</a>计算按压时间的代码，我实在没看懂...不过我猜测，也许是考虑不同手机屏幕分辨率适配等等问题。大家有兴趣可以看一下。</p>
 <p>我就比较粗暴，勾股定理计算直线距离，直线距离乘以时间系数等于按压时间（我这种方法的效果似乎也不差）。这里的时间系数，是大牛源码里提到的。似乎是不同屏幕大小的手机时间系数略有不同，<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">此源码</a>里已经给了配置文件，我也在我的源码里放了，略微做了些修改。</p>
-<hr />
+<hr>
 <h2 id="最终效果">最终效果</h2>
 <p>最终效果比较依赖于配置文件中的数据，尤其是按压时间系数，大家可以根据自己的实际情况进行修改。</p>
 <p>我的手机是Huawei nova 2s，屏幕大小是2160x1080，实际分数随随便便能够达到三四千分，最后一次游戏的分数是8000多分。欢迎大家在评论区晒出自己的分数哦！</p>
-<p><img src="6.jpg" alt="游戏分数" /></p>
-<hr />
+<p><img src="/2020/07/02/%E7%94%A8python%E7%8E%A9%E5%BE%AE%E4%BF%A1%E8%B7%B3%E4%B8%80%E8%B7%B3%E6%B8%B8%E6%88%8F/6.jpg" alt="游戏分数"></p>
+<hr>
 <h2 id="源码奉上">源码奉上</h2>
 <p><a target="_blank" rel="noopener" href="https://github.com/charloe2000/wechat_jump_game">GitHub</a></p>
-<hr />
+<hr>
 <h2 id="使用说明">使用说明</h2>
 <ol type="1">
 <li>安卓手机通过数据线与电脑相连，打开手机的USB调试</li>
@@ -322,7 +322,7 @@
 <li>手机界面切换到微信跳一跳游戏，点击开始游戏</li>
 <li>执行<code>python wechat_jump_auto.py</code></li>
 </ol>
-<hr />
+<hr>
 <h2 id="总结">总结</h2>
 <p>特别鸣谢<a target="_blank" rel="noopener" href="https://github.com/wangshub/wechat_jump_game">这位大牛</a>，没有ta本篇博客无法顺利完成。本篇博客是博主基于自身理解写成，难免出现错误，望各位批评指正。无论是建议、想法和疑问，各位皆可在评论区提出，集思广益，互帮互助。</p>
 
