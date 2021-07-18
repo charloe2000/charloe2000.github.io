@@ -23,27 +23,27 @@
 
 <script id="hexo-configurations">
     var NexT = window.NexT || {};
-    var CONFIG = {"hostname":"charloe2000.github.io","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+    var CONFIG = {"hostname":"charloe.top","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。本文在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。">
+  <meta name="description" content="Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="论文学习-Stochastic Sparse Subspace Clustering">
-<meta property="og:url" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/index.html">
-<meta property="og:site_name" content="Charloe&#39;s Blog">
-<meta property="og:description" content="Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。本文在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。">
+<meta property="og:url" content="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/index.html">
+<meta property="og:site_name" content="Bocheng&#39;s Blog">
+<meta property="og:description" content="Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。">
 <meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/1.png">
-<meta property="og:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/2.png">
-<meta property="og:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/3.png">
+<meta property="og:image" content="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/1.png">
+<meta property="og:image" content="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/2.png">
+<meta property="og:image" content="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/3.png">
 <meta property="article:published_time" content="2021-07-16T16:00:00.000Z">
-<meta property="article:modified_time" content="2021-07-17T06:30:09.372Z">
-<meta property="article:author" content="Charloe">
+<meta property="article:modified_time" content="2021-07-18T03:57:50.628Z">
+<meta property="article:author" content="Bocheng Zeng">
 <meta property="article:tag" content="subspace clustering">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/1.png">
+<meta name="twitter:image" content="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/1.png">
 
-<link rel="canonical" href="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/">
+<link rel="canonical" href="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/">
 
 
 <script id="page-configurations">
@@ -56,7 +56,7 @@
   };
 </script>
 
-  <title>论文学习-Stochastic Sparse Subspace Clustering | Charloe's Blog</title>
+  <title>论文学习-Stochastic Sparse Subspace Clustering | Bocheng's Blog</title>
   
 
 
@@ -107,7 +107,7 @@
 
     <a href="/" class="brand" rel="start">
       <span class="logo-line-before"><i></i></span>
-      <h1 class="site-title">Charloe's Blog</h1>
+      <h1 class="site-title">Bocheng's Blog</h1>
       <span class="logo-line-after"><i></i></span>
     </a>
   </div>
@@ -176,16 +176,16 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
-    <link itemprop="mainEntityOfPage" href="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/">
+    <link itemprop="mainEntityOfPage" href="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/head.jpeg">
-      <meta itemprop="name" content="Charloe">
-      <meta itemprop="description" content="Grey is the new green.">
+      <meta itemprop="name" content="Bocheng Zeng">
+      <meta itemprop="description" content="No cross, No crown.">
     </span>
 
     <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="Charloe's Blog">
+      <meta itemprop="name" content="Bocheng's Blog">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
@@ -198,10 +198,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2021-07-17 00:00:00 / Modified: 14:30:09" itemprop="dateCreated datePublished" datetime="2021-07-17T00:00:00+08:00">2021-07-17</time>
+              <time title="Created: 2021-07-17 00:00:00" itemprop="dateCreated datePublished" datetime="2021-07-17T00:00:00+08:00">2021-07-17</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-07-18 11:57:50" itemprop="dateModified" datetime="2021-07-18T11:57:50+08:00">2021-07-18</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -220,7 +226,7 @@
               <span class="post-meta-item-text">Views: </span>
               <span id="busuanzi_value_page_pv"></span>
             </span>
-            <div class="post-description">Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。本文在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。</div>
+            <div class="post-description">Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。</div>
 
         </div>
       </header>
@@ -232,12 +238,14 @@
 
       
         <h1 id="论文学习-stochastic-sparse-subspace-clustering">论文学习-Stochastic Sparse Subspace Clustering</h1>
+<h2 id="note">Note</h2>
+<p>Stochastic Sparse Subspace Clustering，随机稀疏子空间聚类论文精读。在阅读该论文时，笔者无任何子空间聚类的知识基础，仅以个人理解对该论文进行了翻译、总结，以及提出自己疑问和思考。文中难免存在错误，欢迎各位留言讨论、批评指正。</p>
 <h2 id="translation">Translation</h2>
 <h3 id="abstract">Abstract</h3>
 <p>最先进的子空间聚类方法基于自表达模型，它将每个数据点表示为其他数据点的线性组合。通过将这种表示约束为稀疏的，稀疏子空间聚类保证产生子空间保持的数据亲和矩阵，仅当两个点来自同一个子空间，他们才是连通的。然而，来自同一个子空间的所有数据可能不是全连通的，这导致了过度分割的问题。我们引入了dropout来解决过度分割问题，它在自表达模型中随机删除数据点。特别地，我们证明了dropout等价于在表示系数上添加一个<span class="math inline">\(l_2\)</span>范数正则项，从而得到更密集的解。然后，我们将优化问题重新表述为一组小规模子问题上的共识问题。这就有了一个可伸缩的和灵活的稀疏子空间聚类方法，称为随机稀疏子空间聚类，可以有效地处理大规模数据集。在合成数据和真实数据集上地广泛实验验证了我们想法的效率和有效性。</p>
 <h3 id="introduction">1. Introduction</h3>
 <p>在许多现实世界应用中，高维数据可以很好地近似为低维子空间的并集，其中每个子空间对应于一个类或一个类别。子空间聚类，即将一组数据划分到它们所属的子空间，已经有了很多的重要应用，例如运动分割、图像聚类、混合系统识别、基因表达支持聚类等等。</p>
-<p><strong>之前的工作</strong>。一种传统的子空间聚类方法是<strong>k-子空间聚类方法</strong>，它使用一组参数来描述子空间，并找到一个数据点与相应子空间之间的距离最小化分割。k-子空间方法需要精确的估计子空间的维数，在许多应用中不适用。另外，相关的优化问题是非凸的，因此想要得到最优解良好的初始化很重要。由于k-子空间方法的局限性，现代子空间聚类使用<strong>谱聚类方法</strong>，从适当的数据亲和图中进行数据分割，该数据亲和图捕获两点是否来自同一子空间。许多早期构造亲和图的方法都是基于拟合和比较局部子空间的。这种方法需要子空间上的密集样本，并且不能处理子空间相交的情况。</p>
+<p><strong>之前的工作</strong>。一种传统的子空间聚类方法是<strong>k-子空间聚类方法</strong>，它通过参数化子空间的基，来找到一个数据点与相应子空间之间的距离最小化分割。k-子空间方法需要精确的估计子空间的维数，在许多应用中不适用。另外，相关的优化问题是非凸的，因此想要得到最优解良好的初始化很重要。由于k-子空间方法的局限性，现代子空间聚类使用<strong>谱聚类方法</strong>，从适当的数据亲和图中进行数据分割，该数据亲和图捕获两点是否来自同一子空间。许多早期构造亲和图的方法都是基于拟合和比较局部子空间的。这种方法需要子空间上的密集样本，并且不能处理子空间相交的情况。</p>
 <p>过去几年里，自表达模型已经成为计算子空间聚类亲和图的强大工具，激发了大量的发展和应用。给定一个数据矩阵<span class="math inline">\(X = [x_1, ..., x_N] ∈ R^{D\times N}\)</span>，其列来自子空间的并集，自表达模型将每个数据点<span class="math inline">\(x_j\in R^D\)</span>表示为其他数据点的线性组合，例如 <span class="math display">\[
 \boldsymbol{x}_j = X \boldsymbol{c}_j + \boldsymbol{e}_j, c_{jj} = 0 \tag{1}
 \]</span> ,其中<span class="math inline">\(\boldsymbol{c}_j\in R^N\)</span>是系数向量，<span class="math inline">\(\boldsymbol{e}_j\)</span>是误差项。虽然(1)中的方程可能有许多可行的解，但至少存在一个解<span class="math inline">\(\boldsymbol{c}_j\)</span>满足子空间保持性质，即仅当<span class="math inline">\(\boldsymbol{x}_i\)</span>和<span class="math inline">\(\boldsymbol{x}_j\)</span>位于同一个子空间中时，<span class="math inline">\(c_{ij}\ne 0\)</span>。给定子空间保持的表示<span class="math inline">\([\boldsymbol{c}_i, ..., \boldsymbol{c}_N]\)</span>，亲和图是由亲和矩阵推导出的，其中的第<span class="math inline">\(i\)</span>行第<span class="math inline">\(j\)</span>列为<span class="math inline">\(|c_{ij}| +|c_{ji}|\)</span>．</p>
@@ -402,19 +410,27 @@ s.t. \quad supp(\boldsymbol{b_j}) \subseteq S^{(k+1)}
 <li><p>什么是稀疏子空间聚类</p>
 <p>公式(10)</p></li>
 <li><p>什么是谱聚类？</p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/29849122">谱聚类算法 - 知乎</a></p></li>
+<p><a target="_blank" rel="noopener" href="https://shunliz.gitbooks.io/machine-learning/content/ml/cluster/spectral.html">谱聚类原理 - Machine Learning (gitbooks.io)</a></p></li>
 <li><p>什么是伯努利分布</p>
 <p><a target="_blank" rel="noopener" href="https://wapbaike.baidu.com/item/伯努利分布">伯努利分布 - 百度百科</a></p></li>
 <li><p>什么是字典</p>
 <p>给定一个n个样本构成的矩阵<span class="math inline">\(X=[x_1,x_2,…,x_n]\in R^{m\times n},x_i\in R^m\)</span>,其中每一列是一个样本，由<span class="math inline">\(X\)</span>中<span class="math inline">\(d\)</span>个样本构成一个“字典”<span class="math inline">\(D=[x_{i1},x_{i2},…,x_{id}]\in R^{m\times d}\)</span>, <span class="math inline">\(D\)</span>中每一列成为原子。那么，每一个样本都可以表示成“字典”中原子的线性组合.</p></li>
 <li><p>什么是OMP算法</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/theonegis/article/details/78230737">正交匹配追踪算法 - CSDN</a></p></li>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/theonegis/article/details/78230737">正交匹配追踪算法 - CSDN</a></p>
+<p><a target="_blank" rel="noopener" href="http://www.ccs.neu.edu/home/eelhami/courses/EE290A/OMP_Krishnaprasad.pdf">Orthogonal matching pursuit: recursive function approximation with applications to wavelet decomposi - Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Confer (neu.edu)</a></p></li>
 </ol>
-<h2 id="other-references">Other References</h2>
+<h2 id="references">References</h2>
 <ol type="1">
+<li><a target="_blank" rel="noopener" href="https://openaccess.thecvf.com/content_CVPR_2020/html/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper.html">Stochastic_Sparse_Subspace_Clustering - thecvf.com</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/av968237486/">CVPR2020 MSAR报告分享 Stochastic Sparse Subspace Clustering 李春光_bilibili</a></li>
 <li><a target="_blank" rel="noopener" href="https://ivenwang.com/2020/04/23/ssc/">王晨朔，稀疏自表示子空间聚类+后续改进</a></li>
 <li><a target="_blank" rel="noopener" href="https://xijunlee.github.io/2016/12/22/2016-12-22-man-tan-gao-wei-shu-ju-ju-lei-2-zi-kong-jian-ju-lei/">Xijun (Ted) Li， 漫谈高维数据聚类(2):子空间聚类</a></li>
 <li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/306672638">多角度理解正则项 - 知乎</a></li>
+<li><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26884695">如何通俗易懂地解释「范数」？ - 知乎</a></li>
+<li><a target="_blank" rel="noopener" href="https://shunliz.gitbooks.io/machine-learning/content/ml/cluster/spectral.html">谱聚类原理 - Machine Learning (gitbooks.io)</a></li>
+<li><a target="_blank" rel="noopener" href="https://wapbaike.baidu.com/item/伯努利分布">伯努利分布 - 百度百科</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/theonegis/article/details/78230737">正交匹配追踪算法 - CSDN</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ccs.neu.edu/home/eelhami/courses/EE290A/OMP_Krishnaprasad.pdf">Orthogonal matching pursuit: recursive function approximation with applications to wavelet decomposi - Signals, Systems and Computers, 1993. 1993 Conference Record of The Twenty-Seventh Asilomar Confer (neu.edu)</a></li>
 </ol>
 <h2 id="questions">Questions</h2>
 <ol type="1">
@@ -430,10 +446,10 @@ p, &amp; \text{with probability }1 - \delta, \\
 \min_{c_j} \Vert \boldsymbol{x_j} - \sum_i c_{ij} \boldsymbol{x_i} \Vert_2^2 + [p(p-2)(1- \delta) + 1] \sum_i \Vert \boldsymbol{x_i} \Vert^2_2 c^2_{ij} \quad s.t. \quad c_{jj} = 0
 \tag{7}
 \]</span> 即类似于公式(8)的形式，也证明了dropout具有隐式<span class="math inline">\(l_2\)</span>正则项。</p></li>
-<li><p>正则项为什么产生密集解？</p>
-<p>在机器学习中，正则项可以使得参数稀疏，缓解过拟合问题。为什么本篇论文中多次提到正则项导致密集解？</p></li>
 <li><p>稀疏子空间聚类是为了得到稀疏系数解，那我们为什么要加正则项得到更密集解？</p>
-<p>我的理解（不一定正确）：过于稀疏的系数解会导致亲和矩阵中有许多项为0，<span class="math inline">\(a_{ij} = \vert c_{ij} \vert + \vert c_{ji} \vert\)</span>，从而导致连通性降低，出现过度分割的风险增加。一项早期的工作[31]证明了稀疏子空间聚类存在连通性问题。更密集的解可以提高连通性，但同时也会增大子空间保持误差，因此需要一个权衡。</p></li>
+<p>我的理解：过于稀疏的系数解会导致亲和矩阵中有许多项为0，<span class="math inline">\(a_{ij} = \vert c_{ij} \vert + \vert c_{ji} \vert\)</span>，从而导致连通性降低，出现过度分割的风险增加。一项早期的工作[31]证明了稀疏子空间聚类存在连通性问题。更密集的解可以提高连通性，但同时也会增大子空间保持误差，因此需要一个权衡。</p></li>
+<li><p>正则项为什么产生密集解？</p>
+<p>在机器学习中，正则项可以使得参数稀疏，缓解过拟合问题。本篇论文中多次提到正则项导致密集解，那么正则项是如何导致密集解的？</p></li>
 <li><p>Consenus Problem是什么意思？</p></li>
 <li><p>什么是T块的共识问题</p></li>
 <li><p>算法1 (Damped OMP)的过程不理解</p></li>
@@ -443,18 +459,19 @@ p, &amp; \text{with probability }1 - \delta, \\
 <li><p><span class="math inline">\(S^3COMP\)</span>模型复杂度分析不太懂</p></li>
 </ol>
 <h2 id="next">Next</h2>
-<ol type="1">
-<li>聚类准确度、子空间保持误差、连通性的计算？</li>
+<ol start="2" type="1">
 <li>K-子空间聚类[5, 2]、谱聚类[38]的深入理解</li>
+<li>实验子空间聚类</li>
 <li>稀疏子空间聚类的深入理解：SSC论文[12, 60]</li>
 <li>如何得到一个子空间保持的解？为什么OMP算法可以获得一个子空间保持的解？[60]</li>
 <li>最小二乘回归的子空间聚类方法[26]</li>
 </ol>
-<h2 id="tips">Tips</h2>
+<h2 id="presentation-tips">Presentation Tips</h2>
 <ol type="1">
-<li>概述性地讲这篇论文做了什么</li>
+<li>讲这篇论文做了什么</li>
 <li>我如何学习这篇论文：获得了哪些知识？哪些部分理解了？有哪些疑问？</li>
 </ol>
+<p>[<a href="Presentation.pptx">Presentation Download</a>]</p>
 
     </div>
 
@@ -466,11 +483,11 @@ p, &amp; \text{with probability }1 - \delta, \\
 <div>
 <ul class="post-copyright">
   <li class="post-copyright-author">
-    <strong>Post author:  </strong>Charloe
+    <strong>Post author:  </strong>Bocheng Zeng
   </li>
   <li class="post-copyright-link">
     <strong>Post link: </strong>
-    <a href="https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/" title="论文学习-Stochastic Sparse Subspace Clustering">https://charloe2000.github.io/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/</a>
+    <a href="https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/" title="论文学习-Stochastic Sparse Subspace Clustering">https://charloe.top/2021/07/17/Chen_Stochastic_Sparse_Subspace_Clustering_CVPR_2020_paper/</a>
   </li>
   <li class="post-copyright-license">
     <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
@@ -553,16 +570,16 @@ p, &amp; \text{with probability }1 - \delta, \\
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%AD%A6%E4%B9%A0-stochastic-sparse-subspace-clustering"><span class="nav-number">1.</span> <span class="nav-text">论文学习-Stochastic Sparse Subspace Clustering</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#translation"><span class="nav-number">1.1.</span> <span class="nav-text">Translation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#abstract"><span class="nav-number">1.1.1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction"><span class="nav-number">1.1.2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#related-work"><span class="nav-number">1.1.3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout-in-self-expressive-model"><span class="nav-number">1.1.4.</span> <span class="nav-text">3. Dropout in Self-Expressive Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stochastic-sparse-subspace-clustering-formulation-and-a-consensus-algorithm"><span class="nav-number">1.1.5.</span> <span class="nav-text">4. Stochastic Sparse Subspace Clustering: Formulation and A Consensus Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#stochastic-sparse-subspace-clustering"><span class="nav-number">1.1.5.1.</span> <span class="nav-text">4.1 Stochastic Sparse Subspace Clustering</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#consensus-orthogonal-matching-pursuit"><span class="nav-number">1.1.5.2.</span> <span class="nav-text">4.2 Consensus Orthogonal Matching Pursuit</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#experiments"><span class="nav-number">1.1.6.</span> <span class="nav-text">5. Experiments</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#experiments-on-synthetic-data"><span class="nav-number">1.1.6.1.</span> <span class="nav-text">5.1. Experiments on Synthetic Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#experiments-on-real-world-datasets"><span class="nav-number">1.1.6.2.</span> <span class="nav-text">5.2. Experiments on Real World Datasets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#more-evaluations"><span class="nav-number">1.1.6.3.</span> <span class="nav-text">5.3. More Evaluations</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#conclusion"><span class="nav-number">1.1.7.</span> <span class="nav-text">6. Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#acknowledgment"><span class="nav-number">1.1.8.</span> <span class="nav-text">Acknowledgment</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#knowledge"><span class="nav-number">1.2.</span> <span class="nav-text">Knowledge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#other-references"><span class="nav-number">1.3.</span> <span class="nav-text">Other References</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#questions"><span class="nav-number">1.4.</span> <span class="nav-text">Questions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#next"><span class="nav-number">1.5.</span> <span class="nav-text">Next</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tips"><span class="nav-number">1.6.</span> <span class="nav-text">Tips</span></a></li></ol></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BA%E6%96%87%E5%AD%A6%E4%B9%A0-stochastic-sparse-subspace-clustering"><span class="nav-number">1.</span> <span class="nav-text">论文学习-Stochastic Sparse Subspace Clustering</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#note"><span class="nav-number">1.1.</span> <span class="nav-text">Note</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#translation"><span class="nav-number">1.2.</span> <span class="nav-text">Translation</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#abstract"><span class="nav-number">1.2.1.</span> <span class="nav-text">Abstract</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#introduction"><span class="nav-number">1.2.2.</span> <span class="nav-text">1. Introduction</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#related-work"><span class="nav-number">1.2.3.</span> <span class="nav-text">2. Related Work</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#dropout-in-self-expressive-model"><span class="nav-number">1.2.4.</span> <span class="nav-text">3. Dropout in Self-Expressive Model</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#stochastic-sparse-subspace-clustering-formulation-and-a-consensus-algorithm"><span class="nav-number">1.2.5.</span> <span class="nav-text">4. Stochastic Sparse Subspace Clustering: Formulation and A Consensus Algorithm</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#stochastic-sparse-subspace-clustering"><span class="nav-number">1.2.5.1.</span> <span class="nav-text">4.1 Stochastic Sparse Subspace Clustering</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#consensus-orthogonal-matching-pursuit"><span class="nav-number">1.2.5.2.</span> <span class="nav-text">4.2 Consensus Orthogonal Matching Pursuit</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#experiments"><span class="nav-number">1.2.6.</span> <span class="nav-text">5. Experiments</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#experiments-on-synthetic-data"><span class="nav-number">1.2.6.1.</span> <span class="nav-text">5.1. Experiments on Synthetic Data</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#experiments-on-real-world-datasets"><span class="nav-number">1.2.6.2.</span> <span class="nav-text">5.2. Experiments on Real World Datasets</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#more-evaluations"><span class="nav-number">1.2.6.3.</span> <span class="nav-text">5.3. More Evaluations</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#conclusion"><span class="nav-number">1.2.7.</span> <span class="nav-text">6. Conclusion</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#acknowledgment"><span class="nav-number">1.2.8.</span> <span class="nav-text">Acknowledgment</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#knowledge"><span class="nav-number">1.3.</span> <span class="nav-text">Knowledge</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#references"><span class="nav-number">1.4.</span> <span class="nav-text">References</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#questions"><span class="nav-number">1.5.</span> <span class="nav-text">Questions</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#next"><span class="nav-number">1.6.</span> <span class="nav-text">Next</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#presentation-tips"><span class="nav-number">1.7.</span> <span class="nav-text">Presentation Tips</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
       <div class="site-overview-wrap sidebar-panel">
         <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
-    <img class="site-author-image" itemprop="image" alt="Charloe"
+    <img class="site-author-image" itemprop="image" alt="Bocheng Zeng"
       src="/images/head.jpeg">
-  <p class="site-author-name" itemprop="name">Charloe</p>
-  <div class="site-description" itemprop="description">Grey is the new green.</div>
+  <p class="site-author-name" itemprop="name">Bocheng Zeng</p>
+  <div class="site-description" itemprop="description">No cross, No crown.</div>
 </div>
 <div class="site-state-wrap motion-element">
   <nav class="site-state">
@@ -621,7 +638,7 @@ p, &amp; \text{with probability }1 - \delta, \\
   <span class="with-love">
     <i class="fa fa-heart"></i>
   </span>
-  <span class="author" itemprop="copyrightHolder">Charloe</span>
+  <span class="author" itemprop="copyrightHolder">Bocheng Zeng</span>
 </div>
 
         
