@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.4.0">
+<meta name="baidu-site-verification" content="code-OVXs829Fc4" />
+<meta name="msvalidate.01" content="C9D0D74B111779312C5B2A23D307F157" />
+<meta name="google-site-verification" content="wBNaN0Z5xsKVGCysMJvKwqoZom-4btG9fPHWCh0JKgc" />
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+  <meta name="google-site-verification" content="true">
+  <meta name="msvalidate.01" content="true">
+  <meta name="baidu-site-verification" content="true">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"charloe.top","root":"/","scheme":"Pisces","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="本文简单介绍DBSCAN算法的原理及实现。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="DBSCAN算法">
+<meta property="og:url" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="Charloe&#39;s Blog">
+<meta property="og:description" content="本文简单介绍DBSCAN算法的原理及实现。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/1.png">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/2.png">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/3.png">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/4.png">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/5.png">
+<meta property="og:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/6.png">
+<meta property="article:published_time" content="2021-09-03T16:00:00.000Z">
+<meta property="article:modified_time" content="2021-09-12T12:42:05.901Z">
+<meta property="article:author" content="Bocheng Zeng">
+<meta property="article:tag" content="Algorithm">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/1.png">
+
+<link rel="canonical" href="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>DBSCAN算法 | Charloe's Blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Charloe's Blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-tags">
+
+    <a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>Tags</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+        <li class="menu-item menu-item-sitemap">
+
+    <a href="/sitemap.xml" rel="section"><i class="fa fa-sitemap fa-fw"></i>Sitemap</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/head.jpeg">
+      <meta itemprop="name" content="Bocheng Zeng">
+      <meta itemprop="description" content="No cross, No crown.">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Charloe's Blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          DBSCAN算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-04 00:00:00" itemprop="dateCreated datePublished" datetime="2021-09-04T00:00:00+08:00">2021-09-04</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-09-12 20:42:05" itemprop="dateModified" datetime="2021-09-12T20:42:05+08:00">2021-09-12</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E7%AE%97%E6%B3%95%E7%AC%94%E8%AE%B0/" itemprop="url" rel="index"><span itemprop="name">算法笔记</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+            <div class="post-description">本文简单介绍DBSCAN算法的原理及实现。</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>本文简单介绍DBSCAN算法的原理及实现。</p>
+<h2 id="dbscan算法原理">DBSCAN算法原理</h2>
+<h3 id="基本概念">基本概念</h3>
+<p>DBSCAN（Density-Based Spatial Clustering of Applications with Noise）是一种基于密度的空间聚类算法。该算法将具有足够密度的区域划分为簇，并在具有噪声的空间数据库中发现任意形状的簇，它将簇定义为密度相连的点的最大集合。</p>
+<p>假设样本集为<span class="math inline">\(D=(x_1, x_2, ..., x_m)\)</span>，DBSCAN算法有如下相关定义：</p>
+<ul>
+<li><span class="math inline">\(\epsilon\)</span>-邻域：对于<span class="math inline">\(x_j∈D\)</span>，其<span class="math inline">\(\epsilon\)</span>-邻域包含样本集<span class="math inline">\(D\)</span>中与<span class="math inline">\(x_j\)</span>的距离不大于<span class="math inline">\(\epsilon\)</span>的子样本集，即<span class="math inline">\(N_{\epsilon}(x_j)= \{x_i∈D|distance(x_i,x_j) \leqslant \epsilon \},\)</span> 这个子样本集的个数记为<span class="math inline">\(|N_{\epsilon}(x_j)|\)</span></li>
+<li>核心点：对于任一样本<span class="math inline">\(x_j∈D\)</span>，如果其ϵϵ-邻域对应的<span class="math inline">\(N_{\epsilon}(x_j)\)</span>至少包含<span class="math inline">\(MinPts\)</span>个样本，即如果<span class="math inline">\(|N_{\epsilon}(x_j)|≥MinPts\)</span>，则<span class="math inline">\(x_j\)</span>是核心对象。</li>
+<li>密度直达：如果<span class="math inline">\(x_i\)</span>位于<span class="math inline">\(x_j\)</span>的<span class="math inline">\(\epsilon\)</span>-邻域中，且<span class="math inline">\(x_j\)</span>是核心对象，则称<span class="math inline">\(x_i\)</span>由<span class="math inline">\(x_j\)</span>密度直达。</li>
+<li>密度可达：对于<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>,如果存在样本样本序列<span class="math inline">\(p_1,p_2,...,p_T\)</span>,满足<span class="math inline">\(p_1=x_i,pT=x_j\)</span>, 且<span class="math inline">\(p_{t+1}\)</span>由<span class="math inline">\(p_t\)</span>密度直达，则称<span class="math inline">\(x_j\)</span>由<span class="math inline">\(x_i\)</span>密度可达。</li>
+<li>密度相连：对于<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>,如果存在核心对象样本<span class="math inline">\(x_k\)</span>，使<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>均由<span class="math inline">\(x_k\)</span>密度可达，则称<span class="math inline">\(x_i\)</span>和<span class="math inline">\(x_j\)</span>密度相连。</li>
+</ul>
+<p>注意：</p>
+<ul>
+<li>密度直达是非对称的，若<span class="math inline">\(x_i\)</span>由<span class="math inline">\(x_j\)</span>密度直达，只有当<span class="math inline">\(x_i\)</span>也为核心对象时，才有<span class="math inline">\(x_j\)</span>由<span class="math inline">\(x_i\)</span>密度直达</li>
+<li>密度可达是密度直达的传递闭包，是非对称的</li>
+<li>密度相连是对称的</li>
+</ul>
+<h3 id="算法原理">算法原理</h3>
+<p><strong>总体思路</strong></p>
+<ol type="1">
+<li>遍历每一个未处理的点
+<ol type="1">
+<li>如果为核心点，找出所有从该点密度可达的点，形成一个簇</li>
+<li>否则，标记后遍历下一个点</li>
+</ol></li>
+</ol>
+<p><strong>详细算法</strong></p>
+<p><strong>算法1</strong></p>
+<p>输入：样本集<span class="math inline">\(D=(x_1, x_2, ..., x_m)\)</span>，参数<span class="math inline">\((\epsilon, MinPts)\)</span></p>
+<p>输出：核心点集合<span class="math inline">\(\Omega\)</span></p>
+<ol type="1">
+<li>初始化核心对象集合<span class="math inline">\(\Omega = \emptyset\)</span></li>
+<li>对于所有点<span class="math inline">\(x_j\)</span>:
+<ol type="1">
+<li>找到样本<span class="math inline">\(x_j\)</span>的<span class="math inline">\(\epsilon\)</span>-邻域子样本集<span class="math inline">\(N_{\epsilon}(x_j)\)</span></li>
+<li>如果子样本集合个数满足<span class="math inline">\(|N_{\epsilon}(x_j)|≥MinPts\)</span>，将样本<span class="math inline">\(x_j\)</span>加入核心对象样本集合<span class="math inline">\(\Omega = \Omega \cup \{ x_j \}\)</span></li>
+</ol></li>
+</ol>
+<p><strong>算法2</strong></p>
+<p>输入：样本集<span class="math inline">\(D=(x_1, x_2, ..., x_m)\)</span>，参数<span class="math inline">\((\epsilon, MinPts)\)</span></p>
+<p>输出：簇划分结果<span class="math inline">\(C=\{ C_1, C_2, ..., C_k \}\)</span></p>
+<ol type="1">
+<li>执行算法1，找到所有核心点<span class="math inline">\(\Omega\)</span></li>
+<li>初始化簇类别<span class="math inline">\(k=0\)</span>， 未访问样本集合<span class="math inline">\(\Gamma = D\)</span>, 簇划分结果<span class="math inline">\(C=\emptyset\)</span></li>
+<li>如果核心点集合<span class="math inline">\(\Omega\)</span>不为空，则继续执行，否则算法结束</li>
+<li>在核心对象集合<span class="math inline">\(\Omega\)</span>中，随机选择一个核心对象<span class="math inline">\(o\)</span>，初始化当前簇核心对象队列<span class="math inline">\(Ω_{cur}=\{o\}\)</span>, 初始化类别序号<span class="math inline">\(k=k+1\)</span>，初始化当前簇样本集合<span class="math inline">\(C_k=\{o\}\)</span>, 更新未访问样本集合<span class="math inline">\(Γ=Γ−{o}\)</span></li>
+<li>Repeat</li>
+<li>如果当前簇核心对象集合<span class="math inline">\(Ω_{cur}\ne∅\)</span>，在<span class="math inline">\(Ω_{cur}\)</span>中取出一个核心对象<span class="math inline">\(o′\)</span>,通过邻域距离阈值<span class="math inline">\(ϵ\)</span>找出所有的<span class="math inline">\(ϵ\)</span>-邻域子样本集<span class="math inline">\(N_ϵ(o′)\)</span>，令<span class="math inline">\(Δ=N_ϵ(o′)∩Γ\)</span>, 更新当前簇样本集合<span class="math inline">\(C_k=C_k∪Δ\)</span>, 更新未访问样本集合<span class="math inline">\(Γ=Γ−Δ\)</span>, 更新<span class="math inline">\(Ω_{cur}=Ω_{cur}∪(Δ∩Ω)−o′\)</span>，更新核心对象集合<span class="math inline">\(Ω=Ω−C_k\)</span></li>
+<li>如果当前簇核心对象队列<span class="math inline">\(Ω_{cur}=∅\)</span>，则当前聚类簇<span class="math inline">\(C_k\)</span>生成完毕, 更新簇划分<span class="math inline">\(C=C \cup C_k\)</span> ，转入步骤3。</li>
+</ol>
+<h2 id="dbscan算法实现">DBSCAN算法实现</h2>
+<h3 id="sklearn-dbscan">Sklearn DBSCAN</h3>
+<p>尝试使用sklearn中的DBSCAN算法。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># all import</span></span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> datasets</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn.cluster <span class="keyword">import</span> DBSCAN</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> time</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># generate data</span></span><br><span class="line">n_samples = <span class="number">1500</span></span><br><span class="line">noisy_circles = datasets.make_circles(n_samples=n_samples, factor=<span class="number">.5</span>,noise=<span class="number">.05</span>)</span><br><span class="line">X, y = noisy_circles</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># plot</span></span><br><span class="line">plt.figure(figsize=(<span class="number">10</span>, <span class="number">5</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line"><span class="comment"># plt.figure(1)</span></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">2</span>, <span class="number">2</span>)</span><br><span class="line"><span class="comment"># plt.figure(2)</span></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/1.png"></p>
+<p>上图是sklearn生成的数据，右图是根据label直接绘制的结果。</p>
+<p>下面使用sklearn中的DBSCAN类对数据X进行聚类。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># run sklearn DBSCAN to predict</span></span><br><span class="line">y_pred = DBSCAN(eps=<span class="number">0.1</span>).fit_predict(X)</span><br><span class="line"></span><br><span class="line"><span class="comment"># plot sklearn DBSCAN result</span></span><br><span class="line">plt.figure(figsize=(<span class="number">5</span>, <span class="number">5</span>))</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y_pred)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/2.png"></p>
+<h3 id="my-dbscan">My DBSCAN</h3>
+<p>此部分代码为笔者依据上述伪代码实现，未经过优化</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># my DBSCAN algorithm</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MyDBSCAN</span>:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self, X, eps=<span class="number">0.5</span>, minPts=<span class="number">5</span></span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @param:</span></span><br><span class="line"><span class="string">            X: input dataset, (n, m)</span></span><br><span class="line"><span class="string">            eps: </span></span><br><span class="line"><span class="string">            minPts:</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.X = X</span><br><span class="line">        self.n = <span class="built_in">len</span>(X)</span><br><span class="line">        self.eps = eps</span><br><span class="line">        self.minPts = minPts</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_core_points</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @return:</span></span><br><span class="line"><span class="string">            core_points: the index of core points</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        core_points = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.n):</span><br><span class="line">            neighbors = self.get_neighbors(i)</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(neighbors) &gt;= self.minPts:</span><br><span class="line">                core_points.append(i)</span><br><span class="line">        <span class="keyword">return</span> core_points</span><br><span class="line"></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get_neighbors</span>(<span class="params">self, point_idx</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @param:</span></span><br><span class="line"><span class="string">            point_idx: index of point</span></span><br><span class="line"><span class="string">        @return:</span></span><br><span class="line"><span class="string">            neighbors: neighbors of point</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        neighbors = []</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.n):</span><br><span class="line">            <span class="keyword">if</span> self.dis_mat[point_idx][i] &lt; self.eps:</span><br><span class="line">                neighbors.append(i)</span><br><span class="line">        <span class="keyword">return</span> neighbors</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">euclidean_distance</span>(<span class="params">self, x, y</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @param:</span></span><br><span class="line"><span class="string">            x: [x1, x2, ...]</span></span><br><span class="line"><span class="string">            y: [y1, y2, ...]</span></span><br><span class="line"><span class="string">        @return:</span></span><br><span class="line"><span class="string">            dis: the euclidean distance between x and y</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="keyword">return</span> np.sqrt(np.<span class="built_in">sum</span>(np.power(x - y, <span class="number">2</span>)))</span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">compute_dis_mat</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @param:</span></span><br><span class="line"><span class="string">            X: input dataset, (n, m)</span></span><br><span class="line"><span class="string">        @return:</span></span><br><span class="line"><span class="string">            self.dis_mat: (n, n)</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        self.dis_mat = np.zeros((self.n, self.n))</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(self.n):</span><br><span class="line">            <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(self.n):</span><br><span class="line">                self.dis_mat[i][j] = self.euclidean_distance(self.X[i], self.X[j])</span><br><span class="line">        <span class="keyword">return</span></span><br><span class="line">    </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">random_choose</span>(<span class="params">self, points</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        random choose a point</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># return points[0]</span></span><br><span class="line">        <span class="keyword">return</span> points[np.random.randint(<span class="number">0</span>, <span class="built_in">len</span>(points))]</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">fit_predict</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">        @param:</span></span><br><span class="line"><span class="string">            X: input dataset, (n, m)</span></span><br><span class="line"><span class="string">        @return:</span></span><br><span class="line"><span class="string">            y_pred: predicted result, (n,)</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="comment"># computer distance matrix</span></span><br><span class="line">        self.compute_dis_mat()</span><br><span class="line"></span><br><span class="line">        core_points = <span class="built_in">set</span>(self.get_core_points())</span><br><span class="line">        waiting_points = <span class="built_in">set</span>([i <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(self.X))])</span><br><span class="line">        cluster = -<span class="number">1</span> * np.zeros(self.n, dtype=np.int32)</span><br><span class="line">        k = <span class="number">0</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">while</span> <span class="built_in">len</span>(core_points) &gt; <span class="number">0</span>:</span><br><span class="line">            o = self.random_choose(<span class="built_in">list</span>(core_points))</span><br><span class="line">            cur_core_points = <span class="built_in">set</span>()</span><br><span class="line">            cur_core_points.add(o)</span><br><span class="line">            cur_cluster = <span class="built_in">set</span>()</span><br><span class="line">            cur_cluster.add(o)</span><br><span class="line">            waiting_points.remove(o)</span><br><span class="line">            <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">                <span class="keyword">if</span> <span class="built_in">len</span>(cur_core_points) &gt; <span class="number">0</span>:</span><br><span class="line">                    point = <span class="built_in">list</span>(cur_core_points)[<span class="number">0</span>]</span><br><span class="line">                    neighbors = <span class="built_in">set</span>(self.get_neighbors(point))</span><br><span class="line">                    delta = neighbors &amp; waiting_points</span><br><span class="line">                    cur_cluster = cur_cluster | delta</span><br><span class="line">                    waiting_points = waiting_points - delta</span><br><span class="line">                    cur_core_points = cur_core_points | (delta &amp; core_points)</span><br><span class="line">                    cur_core_points.remove(point)</span><br><span class="line">                    core_points = core_points - cur_cluster</span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cluster[<span class="built_in">list</span>(cur_cluster)] = k</span><br><span class="line">                    k += <span class="number">1</span></span><br><span class="line">                    <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">return</span> cluster</span><br></pre></td></tr></table></figure>
+<p>将其用到sklearn生成的数据集上测试效果：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">n_samples = <span class="number">500</span></span><br><span class="line">noisy_circles = datasets.make_circles(n_samples=n_samples, factor=<span class="number">.5</span>,</span><br><span class="line">                                      noise=<span class="number">.05</span>)</span><br><span class="line">X, y = noisy_circles</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">start = time.time()</span><br><span class="line">y_my_pred = MyDBSCAN(X=X, eps=<span class="number">0.15</span>).fit_predict()</span><br><span class="line">end1 = time.time()</span><br><span class="line">y_pred = DBSCAN(eps=<span class="number">0.15</span>).fit_predict(X)</span><br><span class="line">end2 = time.time()</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;My DBSCAN: &#x27;</span> + <span class="built_in">str</span>(end1 - start))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;Sklearn DBSCAN: &#x27;</span> + <span class="built_in">str</span>(end2 - end1))</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">My DBSCAN: 1.599961</span><br><span class="line">Sklearn DBSCAN: 0.002103</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># plot sklearn DBSCAN result</span></span><br><span class="line">plt.figure(figsize=(<span class="number">15</span>, <span class="number">5</span>))</span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">3</span>, <span class="number">1</span>)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y)</span><br><span class="line">plt.title(<span class="string">&#x27;origin data&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">3</span>, <span class="number">2</span>)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y_pred)</span><br><span class="line">plt.title(<span class="string">&#x27;sklearn DBSCAN&#x27;</span>)</span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">3</span>, <span class="number">3</span>)</span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y_my_pred)</span><br><span class="line">plt.title(<span class="string">&#x27;My DBSCAN&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/3.png"></p>
+<p>修改eps后的测试结果（minPts=5）：</p>
+<table>
+<thead>
+<tr class="header">
+<th>eps</th>
+<th>result</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>0.1</td>
+<td><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/4.png"></td>
+</tr>
+<tr class="even">
+<td>0.12</td>
+<td><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/5.png"></td>
+</tr>
+<tr class="odd">
+<td>0.15</td>
+<td><img src="/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/6.png"></td>
+</tr>
+</tbody>
+</table>
+<p>可以观察到在sklearn生成的该类数据集上My DBSCAN与sklearn的聚类结果非常接近，但My DBSCAN的运行时间较长。</p>
+<h2 id="reference">Reference</h2>
+<p><a target="_blank" rel="noopener" href="https://www.aaai.org/Papers/KDD/1996/KDD96-037.pdf">A Density-Based Algorithm for Discovering Clusters in Large Spatial Databases with Noise (aaai.org)</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinard/p/6208966.html">DBSCAN密度聚类算法 - 刘建平Pinard - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pinard/p/6217852.html">用scikit-learn学习DBSCAN聚类 - 刘建平Pinard - 博客园</a></p>
+<p><a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/DBSCAN">DBSCAN - 维基百科</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/185623849">详解DBSCAN聚类 - 知乎</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.naftaliharris.com/blog/visualizing-dbscan-clustering/">Visualizing DBSCAN Clustering</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>Bocheng Zeng
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://charloe.top/2021/09/04/DBSCAN%E7%AE%97%E6%B3%95/" title="DBSCAN算法">https://charloe.top/2021/09/04/DBSCAN算法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/Algorithm/" rel="tag"># Algorithm</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/03/%E5%BF%AB%E9%80%9F%E6%8E%92%E5%BA%8F%E4%B8%ADPartition%E5%87%BD%E6%95%B0%E7%9A%84%E4%B8%A4%E7%A7%8D%E5%AE%9E%E7%8E%B0%E7%89%88%E6%9C%AC/" rel="prev" title="快速排序中Partition函数的两种实现版本">
+      <i class="fa fa-chevron-left"></i> 快速排序中Partition函数的两种实现版本
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="gitalk-container"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#dbscan%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">1.</span> <span class="nav-text">DBSCAN算法原理</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">1.1.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%AE%97%E6%B3%95%E5%8E%9F%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">算法原理</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dbscan%E7%AE%97%E6%B3%95%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">DBSCAN算法实现</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#sklearn-dbscan"><span class="nav-number">2.1.</span> <span class="nav-text">Sklearn DBSCAN</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#my-dbscan"><span class="nav-number">2.2.</span> <span class="nav-text">My DBSCAN</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">Reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Bocheng Zeng"
+      src="/images/head.jpeg">
+  <p class="site-author-name" itemprop="name">Bocheng Zeng</p>
+  <div class="site-description" itemprop="description">No cross, No crown.</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">6</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+            <a href="/tags/">
+          
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">tags</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/charloe2000" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;charloe2000" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="https://blog.csdn.net/weixin_44241550" title="CSDN → https:&#x2F;&#x2F;blog.csdn.net&#x2F;weixin_44241550" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>CSDN</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 2020 – 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Bocheng Zeng</span>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/pisces.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+  <script>
+    (function(){
+      var canonicalURL, curProtocol;
+      //Get the <link> tag
+      var x=document.getElementsByTagName("link");
+		//Find the last canonical URL
+		if(x.length > 0){
+			for (i=0;i<x.length;i++){
+				if(x[i].rel.toLowerCase() == 'canonical' && x[i].href){
+					canonicalURL=x[i].href;
+				}
+			}
+		}
+    //Get protocol
+	    if (!canonicalURL){
+	    	curProtocol = window.location.protocol.split(':')[0];
+	    }
+	    else{
+	    	curProtocol = canonicalURL.split(':')[0];
+	    }
+      //Get current URL if the canonical URL does not exist
+	    if (!canonicalURL) canonicalURL = window.location.href;
+	    //Assign script content. Replace current URL with the canonical URL
+      !function(){var e=/([http|https]:\/\/[a-zA-Z0-9\_\.]+\.baidu\.com)/gi,r=canonicalURL,t=document.referrer;if(!e.test(r)){var n=(String(curProtocol).toLowerCase() === 'https')?"https://sp0.baidu.com/9_Q4simg2RQJ8t7jm9iCKT-xh_/s.gif":"//api.share.baidu.com/s.gif";t?(n+="?r="+encodeURIComponent(document.referrer),r&&(n+="&l="+r)):r&&(n+="?l="+r);var i=new Image;i.src=n}}(window);})();
+  </script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+<link rel="stylesheet" href="//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.css">
+
+<script>
+NexT.utils.loadComments(document.querySelector('#gitalk-container'), () => {
+  NexT.utils.getScript('//cdn.jsdelivr.net/npm/gitalk@1/dist/gitalk.min.js', () => {
+    var gitalk = new Gitalk({
+      clientID    : 'a1ba6877ab038511a5e6',
+      clientSecret: 'b717ec24137af7825721102e331c3108a4dd1536',
+      repo        : 'BlogComment',
+      owner       : 'charloe2000',
+      admin       : ['charloe2000'],
+      id          : '4f7b11a29ad77f24b1b575172551891a',
+        language: '',
+      distractionFreeMode: true
+    });
+    gitalk.render('gitalk-container');
+  }, window.Gitalk);
+});
+</script>
+
+</body>
+</html>
